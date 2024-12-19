@@ -92,7 +92,7 @@ fi
 ## nightly build
 if [ "$version" = "nightly build \"v$latest_release_nightly\"" ]; then
     # download nightly build
-    url="https://github.com/mr-manuel/venus-os_${driver_name}/archive/refs/heads/master.zip"
+    url="https://github.com/koljawindeler/venus-os_${driver_name}/archive/refs/heads/master.zip"
 fi
 
 echo "Downloading from: $url"
