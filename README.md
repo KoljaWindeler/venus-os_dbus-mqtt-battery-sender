@@ -8,7 +8,6 @@
 1. [Supporting/Sponsoring this project](#supportingsponsoring-this-project)
 1. [Purpose](#purpose)
 1. [Config](#config)
-1. [JSON structure](#json-structure)
 1. [Install / Update](#install--update)
 1. [Uninstall](#uninstall)
 1. [Restart](#restart)
