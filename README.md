@@ -1,6 +1,6 @@
 # dbus-mqtt-battery - Emulates a aggregated/physical battery from MQTT data
 
-<small>GitHub repository: [mr-manuel/venus-os_dbus-mqtt-battery](https://github.com/mr-manuel/venus-os_dbus-mqtt-battery)</small>
+<small>GitHub repository: [koljawindeler/venus-os_dbus-mqtt-battery](https://github.com/koljawindeler/venus-os_dbus-mqtt-battery)</small>
 
 ## Index
 
@@ -208,7 +208,7 @@ Please remove the `--> *` comments to get a valid `JSON`. Comments are not allow
 2. Execute this commands to download and copy the files:
 
     ```bash
-    wget -O /tmp/download_dbus-mqtt-battery.sh https://raw.githubusercontent.com/mr-manuel/venus-os_dbus-mqtt-battery/master/download.sh
+    wget -O /tmp/download_dbus-mqtt-battery.sh https://raw.githubusercontent.com/koljawindeler/venus-os_dbus-mqtt-battery/master/download.sh
 
     bash /tmp/download_dbus-mqtt-battery.sh
     ```
