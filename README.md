@@ -1,4 +1,4 @@
-# dbus-mqtt-battery-sender - Driver to send battery data to mqtt, as counterpart to https://github.com/mr-manuel/venus-os_dbus-mqtt-battery
+# dbus-mqtt-battery-sender - Driver to send battery data to mqtt
 
 <small>GitHub repository: [koljawindeler/venus-os_dbus-mqtt-battery-sender](https://github.com/koljawindeler/venus-os_dbus-mqtt-battery-sender)</small>
 
