@@ -1,6 +1,6 @@
-# dbus-mqtt-battery - Emulates a aggregated/physical battery from MQTT data
+# dbus-mqtt-battery-sender - Emulates a aggregated/physical battery from MQTT data
 
-<small>GitHub repository: [koljawindeler/venus-os_dbus-mqtt-battery](https://github.com/koljawindeler/venus-os_dbus-mqtt-battery)</small>
+<small>GitHub repository: [koljawindeler/venus-os_dbus-mqtt-battery-sender](https://github.com/koljawindeler/venus-os_dbus-mqtt-battery-sender)</small>
 
 ## Index
 
@@ -38,7 +38,7 @@ It also can be used to aggregate multiple batteries. In this case you can use No
 
 ## Config
 
-Copy or rename the `config.sample.ini` to `config.ini` in the `dbus-mqtt-battery` folder and change it as you need it.
+Copy or rename the `config.sample.ini` to `config.ini` in the `dbus-mqtt-battery-sender` folder and change it as you need it.
 
 
 ## JSON structure
@@ -208,9 +208,9 @@ Please remove the `--> *` comments to get a valid `JSON`. Comments are not allow
 2. Execute this commands to download and copy the files:
 
     ```bash
-    wget -O /tmp/download_dbus-mqtt-battery.sh https://raw.githubusercontent.com/koljawindeler/venus-os_dbus-mqtt-battery/master/download.sh
+    wget -O /tmp/download_dbus-mqtt-battery-sender.sh https://raw.githubusercontent.com/koljawindeler/venus-os_dbus-mqtt-battery-sender/master/download.sh
 
-    bash /tmp/download_dbus-mqtt-battery.sh
+    bash /tmp/download_dbus-mqtt-battery-sender.sh
     ```
 
 3. Select the version you want to install.
@@ -219,8 +219,8 @@ Please remove the `--> *` comments to get a valid `JSON`. Comments are not allow
 
     Example:
 
-    - Pressing enter or entering `1` will install the driver to `/data/etc/dbus-mqtt-battery`.
-    - Entering `2` will install the driver to `/data/etc/dbus-mqtt-battery-2`.
+    - Pressing enter or entering `1` will install the driver to `/data/etc/dbus-mqtt-battery-sender`.
+    - Entering `2` will install the driver to `/data/etc/dbus-mqtt-battery-sender-2`.
 
 ### Extra steps for your first installation
 
@@ -228,24 +228,24 @@ Please remove the `--> *` comments to get a valid `JSON`. Comments are not allow
 
     - If you pressed enter or entered `1` during installation:
     ```bash
-    nano /data/etc/dbus-mqtt-battery/config.ini
+    nano /data/etc/dbus-mqtt-battery-sender/config.ini
     ```
 
     - If you entered `2` during installation:
     ```bash
-    nano /data/etc/dbus-mqtt-battery-2/config.ini
+    nano /data/etc/dbus-mqtt-battery-sender-2/config.ini
     ```
 
 6. Install the driver as a service. The correct command for your installation is shown after the installation.
 
     - If you pressed enter or entered `1` during installation:
     ```bash
-    bash /data/etc/dbus-mqtt-battery/install.sh
+    bash /data/etc/dbus-mqtt-battery-sender/install.sh
     ```
 
     - If you entered `2` during installation:
     ```bash
-    bash /data/etc/dbus-mqtt-battery-2/install.sh
+    bash /data/etc/dbus-mqtt-battery-sender-2/install.sh
     ```
 
     The daemon-tools should start this service automatically within seconds.
@@ -256,12 +256,12 @@ Please remove the `--> *` comments to get a valid `JSON`. Comments are not allow
 
 - To uninstall the default instance:
     ```bash
-    bash /data/etc/dbus-mqtt-battery/uninstall.sh
+    bash /data/etc/dbus-mqtt-battery-sender/uninstall.sh
     ```
 
 - To uninstall the second instance:
     ```bash
-    bash /data/etc/dbus-mqtt-battery-2/uninstall.sh
+    bash /data/etc/dbus-mqtt-battery-sender-2/uninstall.sh
     ```
 
 ## Restart
@@ -270,25 +270,25 @@ Please remove the `--> *` comments to get a valid `JSON`. Comments are not allow
 
 - To restart the default instance:
     ```bash
-    bash /data/etc/dbus-mqtt-battery/restart.sh
+    bash /data/etc/dbus-mqtt-battery-sender/restart.sh
     ```
 
 - To restart the second instance:
     ```bash
-    bash /data/etc/dbus-mqtt-battery-2/restart.sh
+    bash /data/etc/dbus-mqtt-battery-sender-2/restart.sh
     ```
 
 ## Debugging
 
 ⚠️ If you have multiple instances, ensure you choose the correct one.
 
-The logs can be checked with `tail -n 100 -f /data/log/dbus-mqtt-battery/current | tai64nlocal`
+The logs can be checked with `tail -n 100 -f /data/log/dbus-mqtt-battery-sender/current | tai64nlocal`
 
-The service status can be checked with svstat `svstat /service/dbus-mqtt-battery`
+The service status can be checked with svstat `svstat /service/dbus-mqtt-battery-sender`
 
-This will output somethink like `/service/dbus-mqtt-battery: up (pid 5845) 185 seconds`
+This will output somethink like `/service/dbus-mqtt-battery-sender: up (pid 5845) 185 seconds`
 
-If the seconds are under 5 then the service crashes and gets restarted all the time. If you do not see anything in the logs you can increase the log level in `/data/etc/dbus-mqtt-battery/dbus-mqtt-battery.py` by changing `level=logging.WARNING` to `level=logging.INFO` or `level=logging.DEBUG`
+If the seconds are under 5 then the service crashes and gets restarted all the time. If you do not see anything in the logs you can increase the log level in `/data/etc/dbus-mqtt-battery-sender/dbus-mqtt-battery-sender.py` by changing `level=logging.WARNING` to `level=logging.INFO` or `level=logging.DEBUG`
 
 If the script stops with the message `dbus.exceptions.NameExistsException: Bus name already exists: com.victronenergy.battery.mqtt_battery"` it means that the service is still running or another service is using that bus name.
 
