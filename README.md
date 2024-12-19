@@ -13,8 +13,7 @@
 1. [Uninstall](#uninstall)
 1. [Restart](#restart)
 1. [Debugging](#debugging)
-1. [Compatibility](#compatibility)
-1. [Screenshots](#screenshots)
+
 
 
 ## Disclaimer
