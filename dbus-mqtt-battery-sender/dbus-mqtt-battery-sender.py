@@ -17,7 +17,38 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), "ext", "velib_python"
 from vedbus import VeDbusService, VeDbusItemImport  # noqa: E402
 from ve_utils import get_vrm_portal_id  # noqa: E402
 
-
+skiplist = []
+skiplist.append("CurrentAvg")
+skiplist.append("FirmwareVersion")
+skiplist.append("HardwareVersion")
+skiplist.append("Connected")
+skiplist.append("Serial")
+skiplist.append("CustomName")
+skiplist.append("DeviceName")
+skiplist.append("Temperature1")
+skiplist.append("Temperature2")
+skiplist.append("Temperature3")
+skiplist.append("Temperature4")
+skiplist.append("Temperature1Name")
+skiplist.append("Temperature2Name")
+skiplist.append("Temperature3Name")
+skiplist.append("Temperature4Name")
+skiplist.append("ProcessVersion")
+skiplist.append("ProcessName")
+skiplist.append("Connection")
+skiplist.append("DeviceInstance")
+skiplist.append("ProductId")
+skiplist.append("ProductName")
+skiplist.append("ChargeMode")
+skiplist.append("ChargeModeDebug")
+skiplist.append("BatteryLowVoltage")
+skiplist.append("ChargeLimitation")
+skiplist.append("DischargeLimitation")
+skiplist.append("NrOfCellsPerBattery")
+skiplist.append("ForceChargingOff")
+skiplist.append("ForceDischargingOff")
+skiplist.append("TurnBalancingOff")
+skiplist.append("BmsCable")
 
 # get values from config.ini file
 try:
@@ -74,153 +105,6 @@ else:
 connected = 0
 
 
-# formatting
-def _a(p, v):
-    return str("%.1f" % v) + "A"
-
-
-def _ah(p, v):
-    return str("%.1f" % v) + "Ah"
-
-
-def _n(p, v):
-    return str("%i" % v)
-
-
-def _p(p, v):
-    return str("%i" % v) + "%"
-
-
-def _s(p, v):
-    return str("%s" % v)
-
-
-def _t(p, v):
-    return str("%.1f" % v) + "°C"
-
-
-def _v(p, v):
-    return str("%.2f" % v) + "V"
-
-
-def _v3(p, v):
-    return str("%.3f" % v) + "V"
-
-
-def _w(p, v):
-    return str("%i" % v) + "W"
-
-
-battery_dict = {
-    # general data
-    "/Dc/0/Power": {"value": None, "textformat": _w},
-    "/Dc/0/Voltage": {"value": None, "textformat": _v},
-    "/Dc/0/Current": {"value": None, "textformat": _a},
-    "/Dc/0/Temperature": {"value": None, "textformat": _t},
-    "/InstalledCapacity": {"value": None, "textformat": _ah},
-    "/ConsumedAmphours": {"value": None, "textformat": _ah},
-    "/Capacity": {"value": None, "textformat": _ah},
-    "/Soc": {"value": None, "textformat": _p},
-    "/TimeToGo": {"value": None, "textformat": _n},
-    "/Balancing": {"value": None, "textformat": _n},
-    "/SystemSwitch": {"value": None, "textformat": _n},
-    # alarms
-    "/Alarms/LowVoltage": {"value": 0, "textformat": _n},
-    "/Alarms/HighVoltage": {"value": 0, "textformat": _n},
-    "/Alarms/LowSoc": {"value": 0, "textformat": _n},
-    "/Alarms/HighChargeCurrent": {"value": 0, "textformat": _n},
-    "/Alarms/HighDischargeCurrent": {"value": 0, "textformat": _n},
-    "/Alarms/HighCurrent": {"value": 0, "textformat": _n},
-    "/Alarms/CellImbalance": {"value": 0, "textformat": _n},
-    "/Alarms/HighChargeTemperature": {"value": 0, "textformat": _n},
-    "/Alarms/LowChargeTemperature": {"value": 0, "textformat": _n},
-    "/Alarms/LowCellVoltage": {"value": 0, "textformat": _n},
-    "/Alarms/LowTemperature": {"value": 0, "textformat": _n},
-    "/Alarms/HighTemperature": {"value": 0, "textformat": _n},
-    "/Alarms/FuseBlown": {"value": 0, "textformat": _n},
-    # info
-    "/Info/ChargeRequest": {"value": None, "textformat": _n},
-    "/Info/MaxChargeVoltage": {"value": None, "textformat": _v},
-    "/Info/MaxChargeCurrent": {"value": None, "textformat": _a},
-    "/Info/MaxDischargeCurrent": {"value": None, "textformat": _a},
-    # history
-    "/History/ChargeCycles": {"value": None, "textformat": _n},
-    "/History/MinimumVoltage": {"value": None, "textformat": _v},
-    "/History/MaximumVoltage": {"value": None, "textformat": _v},
-    "/History/TotalAhDrawn": {"value": None, "textformat": _ah},
-    # system
-    "/System/MinVoltageCellId": {"value": None, "textformat": _s},
-    "/System/MinCellVoltage": {"value": None, "textformat": _v3},
-    "/System/MaxVoltageCellId": {"value": None, "textformat": _s},
-    "/System/MaxCellVoltage": {"value": None, "textformat": _v3},
-    "/System/MinTemperatureCellId": {"value": None, "textformat": _s},
-    "/System/MinCellTemperature": {"value": None, "textformat": _t},
-    "/System/MaxTemperatureCellId": {"value": None, "textformat": _s},
-    "/System/MaxCellTemperature": {"value": None, "textformat": _t},
-    "/System/MOSTemperature": {"value": None, "textformat": _t},
-    "/System/NrOfModulesOnline": {"value": 1, "textformat": _n},
-    "/System/NrOfModulesOffline": {"value": 0, "textformat": _n},
-    "/System/NrOfModulesBlockingCharge": {"value": 0, "textformat": _n},
-    "/System/NrOfModulesBlockingDischarge": {"value": 0, "textformat": _n},
-    # cell voltages
-    "/Voltages/Sum": {"value": None, "textformat": _v},
-    "/Voltages/Diff": {"value": None, "textformat": _v3},
-    "/Voltages/Cell1": {"value": None, "textformat": _v3},
-    "/Voltages/Cell2": {"value": None, "textformat": _v3},
-    "/Voltages/Cell3": {"value": None, "textformat": _v3},
-    "/Voltages/Cell4": {"value": None, "textformat": _v3},
-    "/Voltages/Cell5": {"value": None, "textformat": _v3},
-    "/Voltages/Cell6": {"value": None, "textformat": _v3},
-    "/Voltages/Cell7": {"value": None, "textformat": _v3},
-    "/Voltages/Cell8": {"value": None, "textformat": _v3},
-    "/Voltages/Cell9": {"value": None, "textformat": _v3},
-    "/Voltages/Cell10": {"value": None, "textformat": _v3},
-    "/Voltages/Cell11": {"value": None, "textformat": _v3},
-    "/Voltages/Cell12": {"value": None, "textformat": _v3},
-    "/Voltages/Cell13": {"value": None, "textformat": _v3},
-    "/Voltages/Cell14": {"value": None, "textformat": _v3},
-    "/Voltages/Cell15": {"value": None, "textformat": _v3},
-    "/Voltages/Cell16": {"value": None, "textformat": _v3},
-    "/Voltages/Cell17": {"value": None, "textformat": _v3},
-    "/Voltages/Cell18": {"value": None, "textformat": _v3},
-    "/Voltages/Cell19": {"value": None, "textformat": _v3},
-    "/Voltages/Cell20": {"value": None, "textformat": _v3},
-    "/Voltages/Cell21": {"value": None, "textformat": _v3},
-    "/Voltages/Cell22": {"value": None, "textformat": _v3},
-    "/Voltages/Cell23": {"value": None, "textformat": _v3},
-    "/Voltages/Cell24": {"value": None, "textformat": _v3},
-    "/Balances/Cell1": {"value": None, "textformat": _n},
-    "/Balances/Cell2": {"value": None, "textformat": _n},
-    "/Balances/Cell3": {"value": None, "textformat": _n},
-    "/Balances/Cell4": {"value": None, "textformat": _n},
-    "/Balances/Cell5": {"value": None, "textformat": _n},
-    "/Balances/Cell6": {"value": None, "textformat": _n},
-    "/Balances/Cell7": {"value": None, "textformat": _n},
-    "/Balances/Cell8": {"value": None, "textformat": _n},
-    "/Balances/Cell9": {"value": None, "textformat": _n},
-    "/Balances/Cell10": {"value": None, "textformat": _n},
-    "/Balances/Cell11": {"value": None, "textformat": _n},
-    "/Balances/Cell12": {"value": None, "textformat": _n},
-    "/Balances/Cell13": {"value": None, "textformat": _n},
-    "/Balances/Cell14": {"value": None, "textformat": _n},
-    "/Balances/Cell15": {"value": None, "textformat": _n},
-    "/Balances/Cell16": {"value": None, "textformat": _n},
-    "/Balances/Cell17": {"value": None, "textformat": _n},
-    "/Balances/Cell18": {"value": None, "textformat": _n},
-    "/Balances/Cell19": {"value": None, "textformat": _n},
-    "/Balances/Cell20": {"value": None, "textformat": _n},
-    "/Balances/Cell21": {"value": None, "textformat": _n},
-    "/Balances/Cell22": {"value": None, "textformat": _n},
-    "/Balances/Cell23": {"value": None, "textformat": _n},
-    "/Balances/Cell24": {"value": None, "textformat": _n},
-    # IO
-    "/Io/AllowToCharge": {"value": None, "textformat": _n},
-    "/Io/AllowToDischarge": {"value": None, "textformat": _n},
-    "/Io/AllowToBalance": {"value": None, "textformat": _n},
-    "/Io/ExternalRelay": {"value": None, "textformat": _n},
-}
-
-
 # MQTT requests
 def on_disconnect(client, userdata, rc):
     global connected
@@ -269,22 +153,39 @@ class DbusMqttBatterySenderService:
     def _update(self):
         global battery_dict
         global connected
+        global skiplist
+        # Load values from dbus
         dbus_conn = dbus.SessionBus() if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus()
         dev = "com.victronenergy.battery." + self._battery_path
         try:
           dbus_items = VeDbusItemImport(dbus_conn, dev, "/").get_value()
         except:
           dbus_items = {}
-          logger.info("battery not (yet) found")
-        battery_dict_dbus = {}
-        for item_path in battery_dict:
-           item_path = item_path[1:]
-           if item_path in dbus_items:
-               battery_dict_dbus.update({"/"+item_path:{"value": dbus_items[item_path]}})
+          logging.info("battery not (yet) found")
+
+        # reformat dbus to mqtt
+        battery_dict_mqtt = {}
+        for dbus_path, dbus_value in dbus_items.items():
+           dbus_path = dbus_path.replace("/0/","/")
+           path = dbus_path.split('/')
+           if(len(path)==1):
+              if(path[0] in skiplist or dbus_value is None):
+                 continue
+              battery_dict_mqtt.update({path[0]:dbus_value})
+           elif(len(path)==2):
+              if(path[1] in skiplist or dbus_value is None):
+                 continue
+              battery_subdict_mqtt = {}
+              if path[0] in battery_dict_mqtt:
+                 battery_subdict_mqtt = battery_dict_mqtt[path[0]]
+              battery_subdict_mqtt.update({path[1]:dbus_value})
+              battery_dict_mqtt.update({path[0]:battery_subdict_mqtt})
+
+        # Push to MQTT
         if connected:
-           result = self._mqtt_client.publish(self._mqtt_topic, json.dumps(battery_dict_dbus))
+           result = self._mqtt_client.publish(self._mqtt_topic, json.dumps(battery_dict_mqtt))
            if result[0] == 0:
-              logging.debug(f"Send `{json.dumps(battery_dict_dbus)}` to topic `{self._mqtt_topic}`")
+              logging.debug(f"Send `{json.dumps(battery_dict_mqtt)[0:50]}...` to topic `{self._mqtt_topic}`")
            else:
               logging.debug(f"Failed to send message to topic {self._mqtt_topic}")
         return True

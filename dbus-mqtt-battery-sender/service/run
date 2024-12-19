@@ -1,4 +1,4 @@
 #!/bin/sh
-echo "*** starting dbus-mqtt-battery ***"
+echo "*** starting dbus-mqtt-battery-sender ***"
 exec 2>&1
 exec python /data/etc/dbus-mqtt-battery-sender/dbus-mqtt-battery-sender.py
