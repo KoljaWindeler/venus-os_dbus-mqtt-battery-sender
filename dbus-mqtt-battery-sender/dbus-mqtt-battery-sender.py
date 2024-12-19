@@ -5,7 +5,7 @@ from gi.repository import GLib  # pyright: ignore[reportMissingImports]
 import logging
 import sys
 import os
-#from time import sleep, time
+from time import sleep
 import json
 import paho.mqtt.client as mqtt
 import configparser  # for config/ini file
@@ -258,33 +258,35 @@ class DbusMqttBatterySenderService:
         self,
         battery_path,
         mqtt_topic,
+        mqtt_client
     ):
 
         self._battery_path = battery_path
-		self._mqtt_topic = mqtt_topic
-		
-        GLib.timeout_add(1000, self._update)  # pause 1000ms before the next request
+        self._mqtt_topic = mqtt_topic
+        self._mqtt_client = mqtt_client
+        GLib.timeout_add(3000, self._update)  # pause 1000ms before the next request
 
     def _update(self):
-
         global battery_dict
-		global connected
-		
-		dbus_conn = dbus.SessionBus() if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus()
-		dbus_prefix = "com.victronenergy.battery." % self._battery_path
-		dbus_item_value = VeDbusItemImport(dbus_conn, dev, dbus_path).get_value()
-		battery_dict_dbus = {}
-		# read all current values
-		for item_path in battery_dict:
-			if item_path in dbus_item:
-				battery_dict_dbus.append(item_path:{"value": battery_dict[item_path]})
-			
-		if connected:
-			result = client.publish(self._mqtt_topic, json.dumps(battery_dict))
-			if result[0] == 0:
-				logging.debug(f"Send `{json.dumps(battery_dict)}` to topic `{self._mqtt_topic}`")
-			else:
-				logging.debug(f"Failed to send message to topic {self._mqtt_topic}")
+        global connected
+        dbus_conn = dbus.SessionBus() if 'DBUS_SESSION_BUS_ADDRESS' in os.environ else dbus.SystemBus()
+        dev = "com.victronenergy.battery." + self._battery_path
+        try:
+          dbus_items = VeDbusItemImport(dbus_conn, dev, "/").get_value()
+        except:
+          dbus_items = {}
+          logger.info("battery not (yet) found")
+        battery_dict_dbus = {}
+        for item_path in battery_dict:
+           item_path = item_path[1:]
+           if item_path in dbus_items:
+               battery_dict_dbus.update({"/"+item_path:{"value": dbus_items[item_path]}})
+        if connected:
+           result = self._mqtt_client.publish(self._mqtt_topic, json.dumps(battery_dict_dbus))
+           if result[0] == 0:
+              logging.debug(f"Send `{json.dumps(battery_dict_dbus)}` to topic `{self._mqtt_topic}`")
+           else:
+              logging.debug(f"Failed to send message to topic {self._mqtt_topic}")
         return True
 
 
@@ -330,6 +332,7 @@ def main():
     DbusMqttBatterySenderService(
         battery_path=config["DEFAULT"]["battery_path"],
         mqtt_topic=config["MQTT"]["topic"],
+        mqtt_client=client
     )
 
     logging.info("Connected to dbus and switching over to GLib.MainLoop() (= event based)")
