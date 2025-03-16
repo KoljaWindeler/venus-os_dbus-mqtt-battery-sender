@@ -182,11 +182,18 @@ class DbusMqttBatterySenderService:
 
         # Push to MQTT
         if connected:
-           result = self._mqtt_client.publish(self._mqtt_topic, json.dumps(battery_dict_mqtt))
-           if result[0] == 0:
-              logging.debug(f"Send `{json.dumps(battery_dict_mqtt)[0:50]}...` to topic `{self._mqtt_topic}`")
+           if("Dc" in battery_dict_mqtt and "Soc" in battery_dict_mqtt):
+              if("Power" in battery_dict_mqtt["Dc"] and "Voltage" in battery_dict_mqtt["Dc"]):
+                 result = self._mqtt_client.publish(self._mqtt_topic, json.dumps(battery_dict_mqtt))
+                 if result[0] == 0:
+                    logging.debug(f"Send `{json.dumps(battery_dict_mqtt)[0:50]}...` to topic `{self._mqtt_topic}`")
+                 else:
+                    logging.debug(f"Failed to send message to topic {self._mqtt_topic}")
+              else:
+                 logging.debug(f"NOT Sending `{json.dumps(battery_dict_mqtt)[0:50]}...` to topic `{self._mqtt_topic}`, missing power or voltage")
            else:
-              logging.debug(f"Failed to send message to topic {self._mqtt_topic}")
+              logging.debug(f"NOT Sending `{json.dumps(battery_dict_mqtt)[0:50]}...` to topic `{self._mqtt_topic}`, missing dc or Soc")
+              logging.debug(battery_dict_mqtt)
         return True
 
 
